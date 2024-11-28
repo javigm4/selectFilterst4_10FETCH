@@ -85,34 +85,29 @@ const options = {
     "x-rapidapi-host": "car-data.p.rapidapi.com",
   },
 };
-export const filtrarCochesPorAño = () => {
-  return new Promise((resolve, reject) => {
-    fetch(url, options)
-      .then((response) => {
-        return response.json(); //convertimos la respuesta en json
-      })
-      .then((cochesArray) => {
-        const añoSeleccionado = document.getElementById("selectYear").value;
-        const marcaSeleccionada = document.getElementById("selectMake").value;
 
-        cochesArray = cochesArray.filter(
-          (coche) => coche.getYear() == Number(añoSeleccionado)
-        );
-        cochesArray = cochesArray.filter(
-          (coche) => coche.getMake() == marcaSeleccionada
-        );
+export const filtrarCochesPorAño = async () => {
+  try {
+    const response = await fetch(url, options);
+    const cochesArray = await response.json();
 
-        if (cochesArray.length > 0) {
-          resolve(cochesArray);
-        } else {
-          reject("No se han encontrado coches con esos datos");
-        }
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+    const añoSeleccionado = document.getElementById("selectYear").value;
+    const marcaSeleccionada = document.getElementById("selectMake").value;
+
+    const cochesFiltrados = cochesArray
+      .filter((coche) => coche.year == Number(añoSeleccionado))
+      .filter((coche) => coche.make == marcaSeleccionada);
+
+    if (cochesFiltrados.length > 0) {
+      return cochesFiltrados;
+    } else {
+      throw "No se han encontrado coches con esos datos";
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
+
 //dasda
 /*---- CREAR DIVS DE CONTENIDO ----*/
 async function crearDivContenido() {
